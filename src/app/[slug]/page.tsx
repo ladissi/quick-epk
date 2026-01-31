@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { createClient } from '@/lib/supabase/server';
-import EPKPublicView from '@/components/epk/EPKPublicView';
+import EPKPublicViewV2 from '@/components/epk/EPKPublicViewV2';
 
 interface PublicEPKPageProps {
   params: Promise<{ slug: string }>;
@@ -70,5 +70,5 @@ export default async function PublicEPKPage({ params }: PublicEPKPageProps) {
     notFound();
   }
 
-  return <EPKPublicView epk={epk} />;
+  return <EPKPublicViewV2 epk={epk} />;
 }

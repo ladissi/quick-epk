@@ -38,6 +38,7 @@ export default function EPKForm({ initialData, userId }: EPKFormProps) {
     social_links: initialData?.social_links || [],
     contact_email: initialData?.contact_email || '',
     is_published: initialData?.is_published || false,
+    notify_on_view: initialData?.notify_on_view ?? true,
   });
 
   const updateField = <K extends keyof EPKFormData>(
@@ -172,6 +173,7 @@ export default function EPKForm({ initialData, userId }: EPKFormProps) {
       social_links: formData.social_links.filter((l) => l.url),
       contact_email: formData.contact_email || null,
       is_published: publish,
+      notify_on_view: formData.notify_on_view,
     };
 
     let result;
@@ -441,7 +443,7 @@ export default function EPKForm({ initialData, userId }: EPKFormProps) {
 
       {/* Actions */}
       <div className="flex justify-between items-center bg-white p-4 rounded-xl border border-gray-200 sticky bottom-4">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-4">
           <label className="flex items-center gap-2 cursor-pointer">
             <input
               type="checkbox"
@@ -450,6 +452,15 @@ export default function EPKForm({ initialData, userId }: EPKFormProps) {
               className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
             />
             <span className="text-sm text-gray-700">Published</span>
+          </label>
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={formData.notify_on_view}
+              onChange={(e) => updateField('notify_on_view', e.target.checked)}
+              className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
+            />
+            <span className="text-sm text-gray-700">Email me when viewed</span>
           </label>
         </div>
 

@@ -18,6 +18,8 @@ export interface EPK {
   social_links: SocialLink[];
   contact_email: string | null;
   is_published: boolean;
+  notify_on_view: boolean;
+  last_notification_at: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -73,6 +75,7 @@ export interface EPKFormData {
   social_links: SocialLink[];
   contact_email: string;
   is_published: boolean;
+  notify_on_view: boolean;
 }
 
 export interface AnalyticsOverview {

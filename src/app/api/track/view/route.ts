@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/server';
 import { hashIP } from '@/lib/utils';
+import { sendViewNotification } from '@/lib/email';
+
+// Rate limit: Don't send more than 1 notification per EPK per hour
+const NOTIFICATION_COOLDOWN_MS = 60 * 60 * 1000; // 1 hour
 
 export async function POST(request: NextRequest) {
   try {
@@ -35,7 +39,8 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const { data, error } = await supabase
+    // Insert view record
+    const { data: viewData, error: viewError } = await supabase
       .from('epk_views')
       .insert({
         epk_id,
@@ -45,18 +50,85 @@ export async function POST(request: NextRequest) {
         user_agent: userAgent,
         sections_viewed: [],
       })
-      .select('id')
+      .select('id, viewed_at')
       .single();
 
-    if (error) {
-      console.error('Error tracking view:', error);
+    if (viewError) {
+      console.error('Error tracking view:', viewError);
       return NextResponse.json({ error: 'Failed to track view' }, { status: 500 });
     }
 
-    return NextResponse.json({ view_id: data.id });
+    // Send notification (non-blocking)
+    sendNotificationIfEnabled(supabase, epk_id, {
+      viewerLocation,
+      referrer,
+      viewedAt: viewData.viewed_at,
+    }).catch(console.error);
+
+    return NextResponse.json({ view_id: viewData.id });
   } catch (error) {
     console.error('Error in view tracking:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}
+
+async function sendNotificationIfEnabled(
+  supabase: Awaited<ReturnType<typeof createServiceClient>>,
+  epkId: string,
+  viewData: { viewerLocation: string | null; referrer: string | null; viewedAt: string }
+) {
+  // Get EPK with owner info
+  const { data: epk, error: epkError } = await supabase
+    .from('epks')
+    .select('artist_name, slug, notify_on_view, last_notification_at, user_id')
+    .eq('id', epkId)
+    .single();
+
+  if (epkError || !epk) {
+    console.error('Error fetching EPK for notification:', epkError);
+    return;
+  }
+
+  // Check if notifications are enabled
+  if (!epk.notify_on_view) {
+    return;
+  }
+
+  // Check rate limit
+  if (epk.last_notification_at) {
+    const lastNotification = new Date(epk.last_notification_at).getTime();
+    const now = Date.now();
+    if (now - lastNotification < NOTIFICATION_COOLDOWN_MS) {
+      console.log('Notification rate limited for EPK:', epkId);
+      return;
+    }
+  }
+
+  // Get owner's email from auth
+  const { data: userData, error: userError } = await supabase.auth.admin.getUserById(
+    epk.user_id
+  );
+
+  if (userError || !userData?.user?.email) {
+    console.error('Error fetching user email:', userError);
+    return;
+  }
+
+  // Send notification
+  const result = await sendViewNotification(userData.user.email, {
+    artistName: epk.artist_name,
+    epkSlug: epk.slug,
+    viewerLocation: viewData.viewerLocation,
+    referrer: viewData.referrer,
+    viewedAt: viewData.viewedAt,
+  });
+
+  if (result) {
+    // Update last_notification_at
+    await supabase
+      .from('epks')
+      .update({ last_notification_at: new Date().toISOString() })
+      .eq('id', epkId);
   }
 }
 

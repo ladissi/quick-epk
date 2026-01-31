@@ -52,7 +52,7 @@ export async function sendViewNotification(
 
   try {
     const { data: result, error } = await client.emails.send({
-      from: 'QuickEPK <notifications@quickepk.com>',
+      from: 'QuickEPK <onboarding@resend.dev>',
       to: toEmail,
       subject: `Someone just viewed your EPK - ${artistName}`,
       html: `

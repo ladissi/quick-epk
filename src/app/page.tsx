@@ -62,14 +62,11 @@ export default async function LandingPage() {
                 Create Your EPK - Free
               </Button>
             </Link>
-            <Link href="#features">
-              <Button
-                variant="outline"
-                size="lg"
-                className="w-full sm:w-auto px-8 !border-white !text-white hover:!bg-white/20"
-              >
-                See How It Works
-              </Button>
+            <Link
+              href="#features"
+              className="w-full sm:w-auto px-8 py-3 text-base font-medium rounded-lg border-2 border-white text-white hover:bg-white/20 transition-colors inline-flex items-center justify-center"
+            >
+              See How It Works
             </Link>
           </div>
         </div>

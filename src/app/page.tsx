@@ -425,13 +425,12 @@ export default async function LandingPage() {
                   Email notifications
                 </li>
               </ul>
-              <Button
-                className="w-full bg-white text-purple-600 hover:bg-gray-100"
-                size="lg"
+              <button
+                className="w-full bg-white text-purple-600 font-medium px-6 py-3 rounded-lg opacity-80 cursor-not-allowed"
                 disabled
               >
                 Notify Me
-              </Button>
+              </button>
             </div>
           </div>
         </div>

@@ -60,46 +60,62 @@ export default function EPKPublicViewV2({ epk }: EPKPublicViewProps) {
         background: `linear-gradient(180deg, ${palette.background} 0%, ${palette.dominant} 100%)`,
       } as React.CSSProperties}
     >
-      {/* Organic background elements */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        {/* Primary pulsing blob - uses dominant color */}
+      {/* Organic background elements - visible throughout including hero */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none z-[5]">
+        {/* Primary pulsing blob - top area, very visible */}
         <div
-          className="absolute -top-32 -right-32 w-[500px] h-[500px] rounded-full blur-[150px] organic-blob-1"
+          className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full organic-blob-1"
           style={{
-            background: `radial-gradient(circle, ${palette.dominant} 0%, transparent 70%)`,
+            background: `radial-gradient(circle, ${palette.accent} 0%, ${palette.accent}66 30%, transparent 60%)`,
+            filter: 'blur(80px)',
+            opacity: 0.5,
+          }}
+        />
+
+        {/* Secondary blob - left side */}
+        <div
+          className="absolute top-[20%] -left-32 w-[500px] h-[500px] rounded-full organic-blob-2"
+          style={{
+            background: `radial-gradient(circle, ${palette.dominant} 0%, ${palette.dominant}66 30%, transparent 60%)`,
+            filter: 'blur(60px)',
             opacity: 0.4,
           }}
         />
 
-        {/* Secondary blob - uses accent color */}
+        {/* Tertiary blob - center-bottom */}
         <div
-          className="absolute top-1/2 -left-48 w-[400px] h-[400px] rounded-full blur-[120px] organic-blob-2"
+          className="absolute top-[60%] left-[20%] w-[450px] h-[450px] rounded-full organic-blob-3"
           style={{
-            background: `radial-gradient(circle, ${palette.accent} 0%, transparent 70%)`,
-            opacity: 0.2,
+            background: `radial-gradient(circle, ${palette.muted} 0%, ${palette.muted}66 30%, transparent 60%)`,
+            filter: 'blur(70px)',
+            opacity: 0.35,
           }}
         />
 
-        {/* Tertiary blob - bottom */}
+        {/* Fourth blob for more movement */}
         <div
-          className="absolute -bottom-32 right-1/4 w-[350px] h-[350px] rounded-full blur-[100px] organic-blob-3"
+          className="absolute top-[40%] right-[10%] w-[350px] h-[350px] rounded-full organic-blob-1"
           style={{
-            background: `radial-gradient(circle, ${palette.muted} 0%, transparent 70%)`,
+            background: `radial-gradient(circle, ${palette.text}22 0%, transparent 60%)`,
+            filter: 'blur(50px)',
             opacity: 0.3,
+            animationDelay: '3s',
           }}
         />
 
         {/* Floating particles */}
-        {loaded && [...Array(12)].map((_, i) => (
+        {loaded && [...Array(15)].map((_, i) => (
           <div
             key={i}
-            className="absolute w-1 h-1 rounded-full floating-particle"
+            className="absolute rounded-full floating-particle"
             style={{
-              left: `${10 + (i * 7) % 80}%`,
-              top: `${15 + (i * 11) % 70}%`,
+              left: `${8 + (i * 6) % 85}%`,
+              top: `${12 + (i * 7) % 75}%`,
+              width: `${3 + (i % 3) * 2}px`,
+              height: `${3 + (i % 3) * 2}px`,
               background: palette.text,
-              opacity: 0.1,
-              animationDelay: `${i * 0.5}s`,
+              opacity: 0.2,
+              animationDelay: `${i * 0.4}s`,
             }}
           />
         ))}
@@ -122,7 +138,14 @@ export default function EPKPublicViewV2({ epk }: EPKPublicViewProps) {
               <div
                 className="absolute inset-0"
                 style={{
-                  background: `linear-gradient(0deg, ${palette.background} 0%, transparent 50%, transparent 70%, ${palette.background}88 100%)`,
+                  background: `linear-gradient(0deg, ${palette.background} 0%, ${palette.background}99 25%, transparent 50%, transparent 60%, ${palette.background}66 100%)`,
+                }}
+              />
+              {/* Extra vignette for corners */}
+              <div
+                className="absolute inset-0"
+                style={{
+                  background: 'radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.4) 100%)',
                 }}
               />
             </div>
@@ -135,8 +158,11 @@ export default function EPKPublicViewV2({ epk }: EPKPublicViewProps) {
             {/* Genre/Location tag */}
             {(epk.genre || epk.location) && (
               <p
-                className="text-sm md:text-base tracking-widest uppercase mb-4 opacity-70"
-                style={{ color: palette.text }}
+                className="text-sm md:text-base tracking-widest uppercase mb-4"
+                style={{
+                  color: palette.text,
+                  textShadow: '0 2px 10px rgba(0,0,0,0.5), 0 0 30px rgba(0,0,0,0.3)',
+                }}
               >
                 {[epk.genre, epk.location].filter(Boolean).join(' · ')}
               </p>
@@ -145,7 +171,10 @@ export default function EPKPublicViewV2({ epk }: EPKPublicViewProps) {
             {/* Artist name - large, impactful */}
             <h1
               className="text-5xl md:text-8xl lg:text-9xl font-bold tracking-tight leading-none mb-6"
-              style={{ color: palette.text }}
+              style={{
+                color: palette.text,
+                textShadow: '0 4px 20px rgba(0,0,0,0.6), 0 0 60px rgba(0,0,0,0.4)',
+              }}
             >
               {epk.artist_name}
             </h1>

@@ -60,6 +60,51 @@ export default function EPKPublicViewV2({ epk }: EPKPublicViewProps) {
         background: `linear-gradient(180deg, ${palette.background} 0%, ${palette.dominant} 100%)`,
       } as React.CSSProperties}
     >
+      {/* Organic background elements */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        {/* Primary pulsing blob - uses dominant color */}
+        <div
+          className="absolute -top-32 -right-32 w-[500px] h-[500px] rounded-full blur-[150px] organic-blob-1"
+          style={{
+            background: `radial-gradient(circle, ${palette.dominant} 0%, transparent 70%)`,
+            opacity: 0.4,
+          }}
+        />
+
+        {/* Secondary blob - uses accent color */}
+        <div
+          className="absolute top-1/2 -left-48 w-[400px] h-[400px] rounded-full blur-[120px] organic-blob-2"
+          style={{
+            background: `radial-gradient(circle, ${palette.accent} 0%, transparent 70%)`,
+            opacity: 0.2,
+          }}
+        />
+
+        {/* Tertiary blob - bottom */}
+        <div
+          className="absolute -bottom-32 right-1/4 w-[350px] h-[350px] rounded-full blur-[100px] organic-blob-3"
+          style={{
+            background: `radial-gradient(circle, ${palette.muted} 0%, transparent 70%)`,
+            opacity: 0.3,
+          }}
+        />
+
+        {/* Floating particles */}
+        {loaded && [...Array(12)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute w-1 h-1 rounded-full floating-particle"
+            style={{
+              left: `${10 + (i * 7) % 80}%`,
+              top: `${15 + (i * 11) % 70}%`,
+              background: palette.text,
+              opacity: 0.1,
+              animationDelay: `${i * 0.5}s`,
+            }}
+          />
+        ))}
+      </div>
+
       {/* Film grain overlay */}
       <div className="grain-overlay" />
 
@@ -394,6 +439,84 @@ export default function EPKPublicViewV2({ epk }: EPKPublicViewProps) {
           z-index: 1000;
           opacity: 0.03;
           background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+        }
+
+        /* Organic blob animations */
+        .organic-blob-1 {
+          animation: blob-drift-1 20s ease-in-out infinite;
+        }
+
+        .organic-blob-2 {
+          animation: blob-drift-2 25s ease-in-out infinite;
+        }
+
+        .organic-blob-3 {
+          animation: blob-drift-3 18s ease-in-out infinite;
+        }
+
+        @keyframes blob-drift-1 {
+          0%, 100% {
+            transform: translate(0, 0) scale(1);
+            opacity: 0.4;
+          }
+          33% {
+            transform: translate(-30px, 40px) scale(1.1);
+            opacity: 0.5;
+          }
+          66% {
+            transform: translate(20px, -20px) scale(0.95);
+            opacity: 0.35;
+          }
+        }
+
+        @keyframes blob-drift-2 {
+          0%, 100% {
+            transform: translate(0, 0) scale(1);
+            opacity: 0.2;
+          }
+          50% {
+            transform: translate(40px, -30px) scale(1.15);
+            opacity: 0.3;
+          }
+        }
+
+        @keyframes blob-drift-3 {
+          0%, 100% {
+            transform: translate(0, 0) scale(1);
+            opacity: 0.3;
+          }
+          33% {
+            transform: translate(25px, 20px) scale(1.05);
+            opacity: 0.35;
+          }
+          66% {
+            transform: translate(-15px, -25px) scale(0.9);
+            opacity: 0.25;
+          }
+        }
+
+        /* Floating particles */
+        .floating-particle {
+          animation: particle-float 12s ease-in-out infinite;
+        }
+
+        @keyframes particle-float {
+          0%, 100% {
+            transform: translateY(0) translateX(0);
+            opacity: 0.1;
+          }
+          25% {
+            transform: translateY(-30px) translateX(15px);
+            opacity: 0.2;
+          }
+          50% {
+            transform: translateY(-15px) translateX(-10px);
+            opacity: 0.15;
+          }
+          75% {
+            transform: translateY(-40px) translateX(8px);
+            opacity: 0.2;
+          }
         }
 
         @keyframes breathe {
